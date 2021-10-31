@@ -58,7 +58,7 @@ module PageMeta
       content_proc = if block_given?
                        block
                      else
-                       c = args.pop
+                       c = keys.pop
                        c.is_a?(Hash) ? proc { send(c) } : proc { c }
                      end
 
