@@ -63,20 +63,20 @@ module PageMeta
                      end
 
       keys = Array.wrap(keys).flatten
-      key = keys.pop
+      key = keys.shift
       scope = keys.pop || :value
 
       before_action do
         @page_meta_for ||= {}
-        @page_meta_for[scope] ||= {}
-        @page_meta_for[scope][key] = instance_exec(&content_proc).presence || nil
+        @page_meta_for[key] ||= {}
+        @page_meta_for[key][scope] = instance_exec(&content_proc).presence || nil
       end
     end
   end
 
   def page_meta_for(key, scopes: [:prefix, :value, :suffix], join_string: " - ")
     @page_meta_for ||= {}
-    scopes.map { |s| @page_meta_for.fetch(s, {}).fetch(key, nil) }
+    scopes.map { |s| @page_meta_for.fetch(key, {}).fetch(s, nil) }
           .select(&:present?)
           .join(join_string)
           .presence
