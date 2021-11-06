@@ -9,7 +9,7 @@ module PageMeta
 
   included do
     initialize_meta
-    helper_method :page_meta_for
+    helper_method :page_meta_for, :page_meta_for?
   end
 
   module ClassMethods
@@ -80,6 +80,10 @@ module PageMeta
           .select(&:present?)
           .join(join_string)
           .presence
+  end
+
+  def page_meta_for?(key)
+    (@page_meta_for || {}).key?(key)
   end
 end
 
