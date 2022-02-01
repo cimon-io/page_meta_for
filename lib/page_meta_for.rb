@@ -54,19 +54,19 @@ module PageMeta
     #     end
     #   end
     #
-    def meta_for(*keys, &block)
+    def meta_for(*keys, **options, &block)
       content_proc = if block_given?
                        block
                      else
                        c = keys.pop
-                       c.is_a?(Hash) ? proc { send(c) } : proc { c }
+                       c.is_a?(Symbol) ? proc { send(c) } : proc { c }
                      end
 
       keys = Array.wrap(keys).flatten
       key = keys.shift
       scope = keys.pop || :value
 
-      before_action do
+      before_action(**options) do
         @page_meta_for ||= {}
         @page_meta_for[key] ||= {}
         @page_meta_for[key][scope] = instance_exec(&content_proc).presence || nil
