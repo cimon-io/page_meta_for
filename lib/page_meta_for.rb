@@ -83,7 +83,7 @@ module PageMeta
   end
 
   def page_meta_for?(key)
-    (@page_meta_for || {}).key?(key)
+    (@page_meta_for || {}).fetch(key, {}).values.any?(&:present?)
   end
 end
 
