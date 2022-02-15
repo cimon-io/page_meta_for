@@ -69,7 +69,7 @@ module PageMeta
       before_action(**options) do
         @page_meta_for ||= {}
         @page_meta_for[key] ||= {}
-        @page_meta_for[key][scope] = instance_exec(&content_proc).presence || nil
+        @page_meta_for[key][scope] = content_proc
       end
     end
   end
@@ -77,6 +77,7 @@ module PageMeta
   def page_meta_for(key, scopes: [:prefix, :value, :suffix], join_string: " - ")
     @page_meta_for ||= {}
     scopes.map { |s| @page_meta_for.fetch(key, {}).fetch(s, nil) }
+          .map { |s| instance_exec(&s) }
           .select(&:present?)
           .join(join_string)
           .presence
