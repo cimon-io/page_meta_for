@@ -77,6 +77,7 @@ module PageMeta
   def page_meta_for(key, scopes: [:prefix, :value, :suffix], join_string: " - ")
     @page_meta_for ||= {}
     scopes.map { |s| @page_meta_for.fetch(key, {}).fetch(s, nil) }
+          .select(&:present?)
           .map { |s| instance_exec(&s) }
           .select(&:present?)
           .join(join_string)
