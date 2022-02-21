@@ -58,8 +58,11 @@ module PageMeta
       content_proc = if block_given?
                        block
                      else
-                       c = keys.pop
-                       c.is_a?(Symbol) ? proc { send(c) } : proc { c }
+                       case (c = keys.pop)
+                        when Symbol then proc { send(c) }
+                        when nil then nil
+                        else proc { c }
+                       end
                      end
 
       keys = Array.wrap(keys).flatten
@@ -69,7 +72,12 @@ module PageMeta
       before_action(**options) do
         @page_meta_for ||= {}
         @page_meta_for[key] ||= {}
-        @page_meta_for[key][scope] = content_proc
+
+        if content_proc.nil?
+          @page_meta_for[key].delete(scope)
+        else
+          @page_meta_for[key][scope] = content_proc
+        end
       end
     end
   end
